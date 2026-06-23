@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Supabase Login Demo</title>
+
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  background-image: url("rasen chatgpt.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+  margin: 0;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+    #header {
+  display: flex;
+  justify-content: center;
+}
+
+    #logo-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    #logo {
+      width: 510px;
+      height: auto;
+    }
+
+    #ball-wrapper {
+      position: absolute;
+      left: 15.2%;
+      top: 56%;
+      transform: translate(-50%, -50%);
+      animation: flug 1.5s ease-out forwards;
+    }
+
+    #ball {
+      width: 26px;
+      height: 26px;
+      animation: spin 15s linear infinite;
+    }
+
+    #container {
+  width: 450px;
+  margin-top: 10px;
+  padding: 30px;
+  background: transparent;
+}
+
+    #container h2,
+    #container p,
+    #container a {
+      color: white;
+    }
+
+    input {
+  width: 100%;
+  padding: 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 20px;
+  box-sizing: border-box;
+}
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes flug {
+      from {
+        transform:
+          translate(-50%, -50%)
+          translate(430px, 400px);
+      }
+
+      to {
+        transform:
+          translate(-50%, -50%)
+          translate(0, 0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="header">
+    <div id="logo-container">
+      <img id="logo" src="logo mit titel final.png" alt="WiG Tippspiel">
+
+      <span id="ball-wrapper">
+        <img id="ball" src="fussball_ohne_schatten.png" alt="Ball">
+      </span>
+    </div>
+  </div>
+  <div id="container">
+    <h2>Registrieren</h2>
+
+    <input id="email" type="email" placeholder="Email" />
+    <br /><br />
+    <input id="password" type="password" placeholder="Password" />
+    <br /><br />
+
+    <button id="signup">Registrieren</button>
+
+    <p id="status"></p>
+
+    <script type="module">
+      import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+      const supabaseUrl = "https://kmhwwdsuzphkpfupkynf.supabase.co";
+      const supabaseKey = "sb_publishable_7ih4VSPUkXVfHkBa7lrDCA_mO_d0pW1";
+
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      // redirect if already logged in
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        window.location.href = "login.html";
+      }
+
+      async function signup() {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        const { error } = await supabase.auth.signUp({ email, password });
+
+        document.getElementById("status").innerText =
+          error ? error.message : "Signup erfolgreich! Schauen Sie in ihren E-Mails";
+      }
+
+      document.getElementById("signup").addEventListener("click", signup);
+
+    </script>
+  </div>
+</body>
+</html>

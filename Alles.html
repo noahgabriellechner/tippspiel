@@ -1,0 +1,1129 @@
+
+<!DOCTYPE html> 
+<html lang="de"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <title>WM 2026 Tippspiel</title> 
+  <style>
+@font-face {
+      font-family: 'MeineSchrift';
+      src: url('GREGH___.ttf');
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url("rasen chatgpt.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      text-align: center;
+      margin: 40px;
+      padding-top: 200px;
+      position: relative;
+    }
+
+
+    #header {
+      display: flex;
+      flex-direction: row;   /* Nebeneinander auch auf dem Smartphone */
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-top: -120px;
+      text-align: center;
+      flex-wrap: wrap;       /* Verhindert Überlaufen auf kleinen Displays */
+    }
+
+    #title {
+      position: relative;
+      top: 0;
+      left: 0;
+      font-size: clamp(40px, 6vw, 120px);
+      color: white;
+    }
+
+    #wirsberg-logo {
+      height: 150px;
+    }
+
+
+    #logo-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    #logo {
+        display: inline-block;
+        position: relative;
+        left: 20px;   
+        right: 20px;  
+        top: 10px;    
+        bottom: 10px; 
+        font-size: 90px;
+        font-family: 'MeineSchrift', sans-serif; 
+        color: white;
+        font-weight: bold;
+        letter-spacing: 0px;
+        text-shadow: 3px 3px 8px rgba(0,0,0,0.3);
+    }
+
+    #ball-wrapper {
+      position: absolute;
+      left: 17.4%;
+      top: 61%;
+      transform: translate(-50%,-50%);
+      animation: flug 1.5s ease-out forwards;
+    }
+
+    #ball {
+      width: 44px;
+      height: 44px;
+      font-size: 38px;
+      line-height: 44px;
+      position: relative;
+      z-index: 2;
+      display: inline-block;
+      animation: spin 15s linear infinite;
+    }
+
+
+    #name {
+      margin-top: 50px;
+    }
+
+    label {
+      font-size: 28px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+    }
+
+    #team_a, #team_b {
+      font-size: 28px;
+      color: white;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+    }
+
+    .cursor {
+      animation: blink 0.8s infinite;
+      color: white;
+      font-weight: bold;
+      margin-left: 2px;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes flug {
+        from {
+            transform: translate(-50%, -50%) translate(800px, 400px);
+        }
+        to {
+            transform: translate(-50%, -50%) translate(0, 0);
+        }
+    }
+
+
+    button {
+      padding: 10px 20px;
+      border-radius: 5px;
+      border: none;
+      background-color: red;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+
+    .error-icon {
+      color: white;
+      background-color: #e60000;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 12px;
+      line-height: 18px;
+      text-align: center;
+      font-family: "Georgia", serif;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-block;
+      margin-left: 8px;
+      vertical-align: middle;
+      position: relative;
+    }
+
+    .error-icon::after {
+      content: "Der Username kann maximal 10 Zeichen sein!";
+      position: absolute;
+      bottom: 140%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      font-weight: normal;
+      white-space: nowrap;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+      pointer-events: none;
+      z-index: 999;
+      box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .error-icon::before {
+      content: "";
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 6px;
+      border-style: solid;
+      border-color: #333 transparent transparent transparent;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .error-icon:hover::after, .error-icon:hover::before,
+    .error-icon.active::after, .error-icon.active::before {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .info-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background-color: #e6f2ff;
+      color: #0066cc;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+      font-family: Arial, sans-serif;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .info-badge::after {
+      content: "Noch zu tippende Spiele";
+      position: absolute;
+      bottom: 140%;
+      right: 0; 
+      background-color: #0066cc;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      font-weight: normal;
+      white-space: nowrap;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+      pointer-events: none;
+      z-index: 999;
+      box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .info-badge::before {
+      content: "";
+      position: absolute;
+      bottom: 120%;
+      right: 25px; 
+      border-width: 6px;
+      border-style: solid;
+      border-color: #0066cc transparent transparent transparent;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .info-badge:hover::after, .info-badge:hover::before,
+    .info-badge.active::after, .info-badge.active::before {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .info-icon-blue {
+      color: white;
+      background-color: #0066cc;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      font-size: 11px;
+      line-height: 16px;
+      text-align: center;
+      font-family: "Georgia", serif;
+      font-weight: bold;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body> 
+
+<div id="header">
+  <div id="logo-container">
+    <img id="logo" src="logo mit titel final.png">
+    <span id="ball-wrapper">
+        <img id="ball" src="fussball_ohne_schatten.png">
+    </span>
+  </div>
+</div>
+<br>
+<div id="begruessung_container" style="font-size: 20px; font-weight: bold; color: white; text-shadow: 1px 1px 4px rgba(0,0,0,0.6); margin-bottom: 25px; min-height: 24px;">
+    <span id="begruessung_text"></span><span class="cursor">_</span>
+</div>
+
+<div id="user_info" style="margin-bottom: 15px; color: white; font-size: 18px; display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap;">
+    <span>Angemeldet als: <strong><span id="username_display">-</span></strong></span>
+    <a href="profil.html" style="color: #ffffff; text-decoration: underline;">Profil</a>
+    <input type="hidden" id="name">
+    <span id="limit-error" style="display:none; color:#fff; background:#e60000; padding:2px 6px; border-radius:4px;">Max. 10 Zeichen</span>
+    <div id="meldung" style="display:none;"></div>
+</div>
+
+<br>
+<label>Spiel auswählen:</label><br>
+<div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px;">
+    <button id="btn_prev" style="padding: 10px 15px;">◀</button>
+
+    <select id="spiel_select" style="padding: 10px; border-radius: 5px; cursor: pointer;">
+        <option value="">-- Bitte wählen --</option>
+    </select>
+
+    <button id="btn_next" style="padding: 10px 15px;">▶</button>
+</div>
+
+<br><br>
+
+<div id="tipp_box" style="position: relative; display: inline-block; background-color: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); min-width: 340px;">
+
+    <div id="overlay" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(3px); z-index: 10; flex-direction: column; justify-content: center; align-items: center; border-radius: 15px;">
+        <div style="font-size: 20px; font-weight: bold; color: #333; text-transform: uppercase; letter-spacing: 1px;">Spiel vorbei</div>
+        <div style="font-size: 13px; color: #666; margin-top: 6px;">Endergebnis</div>
+        <div id="overlay_score" style="font-size: 38px; font-weight: bold; color: #e60000; margin-top: 2px;">0 : 0</div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; color: #333;">Anstoß: <span id="spiel_datum">--.--.</span> | <span id="spiel_zeit">--:--</span> Uhr</div>
+        <div class="info-badge" id="info_badge_tips" onclick="this.classList.toggle('active'); event.stopPropagation();">
+            <span class="info-icon-blue">i</span>
+            <span id="offene_tipps_count">--</span>
+        </div>
+    </div>
+
+    <div id="countdown_box" style="margin: 10px 0 20px 0; font-size: 13px; font-weight: bold; color: #555; background: #f0f0f0; padding: 6px 12px; border-radius: 20px; display: inline-block;">--</div>
+
+    <br>
+
+    <div style="font-size: 18px; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; gap: 8px;">
+        <span id="team_a" style="font-weight:bold; color: #333; text-shadow: none;">Team A</span> 
+        <input type="number" id="tore_a" min="0" step="1" oninput="this.value = this.value.replace(/[^0-9]/g, '');" style="width:45px; padding: 5px; text-align: center; font-size: 16px;" placeholder="0"> : 
+        <input type="number" id="tore_b" min="0" step="1" oninput="this.value = this.value.replace(/[^0-9]/g, '');" style="width:45px; padding: 5px; text-align: center; font-size: 16px;" placeholder="0"> 
+        <span id="team_b" style="font-weight:bold; color: #333; text-shadow: none;">Team B</span>
+    </div>
+
+    <button id="tippSpeichern">Tipp speichern</button>
+</div>
+
+  <h2 style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">Anzeige</h2> 
+  <div id="ausgabe"></div>
+
+
+<input type="text" id="suche" placeholder="Spieler suchen...">
+    <table border ="1">
+        <thead>
+            <tr>
+                <th>Platz</th>
+                <th>Benutzer</th>
+                <th>Punkte</th>
+                <th>
+                    <button id="zurueck">&larr;</button>
+                    <span id="spielT"></span>
+                    <button id="weiter">&rarr;</button>
+                </th>   
+            </tr>
+        </thead>
+        <tbody id="tabelle1"></tbody>
+    </table>
+
+    <footer id="page_footer" style="margin: 30px auto 20px; max-width: 860px; color: white; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; font-size: 14px;">
+        <a href="datenschutzerklärung.html" style="color: white; text-decoration: underline;">Datenschutzerklärung</a>
+        <a href="impressum.html" style="color: white; text-decoration: underline;">Impressum</a>
+        <button id="logout_button" style="padding: 8px 14px; border: none; border-radius: 6px; background: #e60000; color: white; cursor: pointer;">Logout</button>
+    </footer>
+
+ <!--Logik und DB-Verbindung mit JavaScript -->
+  <script type="module">
+
+    //Logik mit JavaScript --> beide Gruppen müssen hier arbeiten
+    //siehe betreffender Bereich!!
+
+
+
+
+
+     //---------------------------------------------------------------------
+    //Supabase Verbindung (nicht ändern!!)
+    //----------------------------------------------------------------------
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabaseUrl = "https://kmhwwdsuzphkpfupkynf.supabase.co";
+    const supabaseKey = "sb_publishable_7ih4VSPUkXVfHkBa7lrDCA_mO_d0pW1";
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    let countdownInterval = null;
+    let spielLadeId = 0;
+
+    let typewriterTimeout = null;
+    let typingAktiv = true;
+    //----------------------------------------------------------------------
+    //Gruppe1: Eingabe
+    //----------------------------------------------------------------------
+
+    function starteBegruessungAnim() {
+        const name = document.getElementById("name").value.trim() || "Tipper";
+        const text = `Hallo ${name}! Bereit zum Tippen?`;
+        const element = document.getElementById("begruessung_text");
+        element.innerText = "";
+        let i = 0;
+
+        typingAktiv = true;
+
+        function type() {
+            if (!typingAktiv) return;
+            if (i < text.length) {
+                element.innerText += text.charAt(i);
+                i++;
+                typewriterTimeout = setTimeout(type, 65);
+            } else {
+                typingAktiv = false;
+            }
+        }
+        type();
+    }
+
+    async function spielLaden() {
+
+        let meineLadeId = ++spielLadeId;
+
+        // Zeichenlimit info
+        let rawName = document.getElementById("name").value;
+        if (rawName.length > 10) {
+            rawName = rawName.slice(0, 10);
+            document.getElementById("name").value = rawName;
+        }
+        const errorIcon = document.getElementById("limit-error");
+        if (rawName.length >= 10) {
+        errorIcon.style.display = "inline-block";
+        } else {
+        errorIcon.style.display = "none";
+        }
+
+        const id = document.getElementById("spiel_select").value;
+        const name = document.getElementById("name").value.trim();
+        //TestNameInternerSpeicher
+        localStorage.setItem("tippspiel_username", name);
+
+        const aktuellerName = name || "Tipper";
+        if (!typingAktiv) {
+            document.getElementById("begruessung_text").innerText = `Hallo ${aktuellerName}! Bereit zum Tippen?`;
+        } else if (rawName.length > 0 && typewriterTimeout) {
+            typingAktiv = false;
+            clearTimeout(typewriterTimeout);
+            document.getElementById("begruessung_text").innerText = `Hallo ${aktuellerName}! Bereit zum Tippen?`;
+        }
+
+        //Alter Timer löschen
+        if (countdownInterval) {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+        }
+        // 1. Eingabefelder und Platzhalter standarmäßig zurücksetzen
+        document.getElementById("overlay").style.display = "none";
+        document.getElementById("tippSpeichern").disabled = false;
+        document.getElementById("tore_a").disabled = false;
+        document.getElementById("tore_b").disabled = false;
+        document.getElementById("tore_a").value = "";
+        document.getElementById("tore_b").value = "";
+        document.getElementById("tore_a").placeholder = "0";
+        document.getElementById("tore_b").placeholder = "0";
+
+        // Wenn kein Spiel ausgewählt ist, hier stoppen
+        if (!id) {
+            document.getElementById("spiel_datum").innerText = "--.--.";
+            document.getElementById("spiel_zeit").innerText = "--:--";
+            document.getElementById("countdown_box").innerText = "--";
+            offeneTippsBerechnen();
+            return;
+        }
+
+        // 2. Aus der Tabelle "spiele" das Spiel mit dieser ID laden
+        const { data: spiel, error } = await supabase
+            .from("spiele")
+            .select('team_a, team_b, Startzeit, "Spiel_fertig?", tore_team_a, tore_team_b')
+            .eq("id", id)
+            .single();
+
+        if (meineLadeId !== spielLadeId) return;
+        if (error) {
+            alert("Fehler beim Laden der Spieldaten von ID " + id);
+            console.error(error);
+            return;
+        }
+
+
+
+        // 3. Teamnamen in HTML-Elemente 
+        document.getElementById("team_a").innerText = spiel.team_a;
+        document.getElementById("team_b").innerText = spiel.team_b;
+
+
+        if (spiel.Startzeit) {
+
+            const datumObjekt = new Date(spiel.Startzeit);
+
+            const formatiertesDatum = datumObjekt.toLocaleDateString('de-DE', {
+                day: '2-digit',
+                month: '2-digit'
+            });
+
+
+            const formatierteZeit = datumObjekt.toLocaleTimeString('de-DE', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        document.getElementById("spiel_datum").innerText = formatiertesDatum;
+        document.getElementById("spiel_zeit").innerText = formatierteZeit;
+        } else {
+        document.getElementById("spiel_datum").innerText = "--.--.";
+        document.getElementById("spiel_zeit").innerText = "--:--";
+        }
+
+        //Neu
+        if (name) {
+            const { data: userDaten, error: userError } = await supabase
+                .from("users") 
+                .select("*")    
+                .ilike("username", name)
+                .maybeSingle();
+                if (meineLadeId !== spielLadeId) return;
+                if (!userError && userDaten) {
+                const userUUID = userDaten.user_ID || userDaten.user_id;
+
+                const { data: tipp, error: tippError } = await supabase
+                    .from("tipps")
+                    .select("tore_team_a, tore_team_b")
+                    .eq("tipper_ID", userUUID) 
+                    .eq("spiel_ID", id)
+                    .maybeSingle(); 
+                if (meineLadeId !== spielLadeId) return;
+                if (!tippError && tipp) {
+                    document.getElementById("tore_a").placeholder = tipp.tore_team_a;
+                    document.getElementById("tore_b").placeholder = tipp.tore_team_b;
+                }
+            }
+        }
+
+        const istSpielFertig = spiel["Spiel_fertig?"];
+
+        if (istSpielFertig) {
+            // A: Das Spiel ist offiziell beendet
+            document.getElementById("countdown_box").innerText = "Beendet";
+            document.getElementById("overlay_score").innerText = `${spiel.tore_team_a} : ${spiel.tore_team_b}`;
+            document.getElementById("overlay").style.display = "flex"; // Zeigt das Overlay an
+
+            document.getElementById("tippSpeichern").disabled = true;
+            document.getElementById("tore_a").disabled = true;
+            document.getElementById("tore_b").disabled = true;
+        } else if (spiel.Startzeit) {
+            // B: Spiel läuft noch oder kommt erst noch -> Countdown starten
+            const startzeitMs = new Date(spiel.Startzeit).getTime();
+
+            const berechneCountdown = () => {
+                const jetztMs = new Date().getTime();
+                const verbleibendeZeit = startzeitMs - jetztMs;
+
+                if (verbleibendeZeit <= 0) {
+                    // Startzeit überschritten Spiel läuft aktuell
+                    document.getElementById("countdown_box").innerText = "Spiel läuft...";
+                    document.getElementById("tippSpeichern").disabled = true;
+                    document.getElementById("tore_a").disabled = true;
+                    document.getElementById("tore_b").disabled = true;
+                    clearInterval(countdownInterval);
+
+                if (countdownInterval) {
+                        clearInterval(countdownInterval);
+                        countdownInterval = null;
+                    }
+
+                } else {
+                    // Countdown berechnen (Tage, Stunden, Minuten, Sekunden)
+                    const tage = Math.floor(verbleibendeZeit / (1000 * 60 * 60 * 24));
+                    const stunden = Math.floor((verbleibendeZeit % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minuten = Math.floor((verbleibendeZeit % (1000 * 60 * 60)) / (1000 * 60));
+                    const sekunden = Math.floor((verbleibendeZeit % (1000 * 60)) / 1000);
+
+                    let text = "Tippen möglich bis: ";
+                    if (tage > 0) text += `${tage}d `;
+                    text += `${stunden}h ${minuten}m ${sekunden}s`;
+
+                    document.getElementById("countdown_box").innerText = text;
+                }
+            };
+
+            berechneCountdown();
+
+            // Falls das Spiel noch nicht läuft den Intervall-Timer starten
+            const jetztMs = new Date().getTime();
+            if (startzeitMs - jetztMs > 0) {
+                countdownInterval = setInterval(berechneCountdown, 1000);
+            }
+        } else {
+            document.getElementById("countdown_box").innerText = "--";
+        }
+
+        offeneTippsBerechnen();
+
+    }
+
+
+
+    // Diese Funktion füllt das Dropdown-Menü beim Laden der Seite
+    async function spieleListeLaden() {
+        const { data: spiele, error } = await supabase
+        .from("spiele")
+        .select('id, team_a, team_b, name, Startzeit, "Spiel_fertig?"') 
+        .eq("spiel_freigeschaltet", true)
+        .order("id", { ascending: true });
+
+        if (error) {
+            console.error("Fehler beim Laden der Spieleliste:", error.message);
+            return;
+        }
+
+        const select = document.getElementById("spiel_select");
+        select.innerHTML = '<option value="" disabled>-- Bitte wählen --</option>';
+
+        if (spiele) {
+            spiele.forEach(spiel => {
+                const option = document.createElement("option");
+                option.value = spiel.id;
+                option.text = spiel.name || `${spiel.team_a} gegen ${spiel.team_b}`; 
+                select.appendChild(option);
+            });
+
+
+            const jetztMs = new Date().getTime();
+            let closestSpielId = spiele[0].id;
+            let minDiffZukunft = Infinity;
+            let minDiffVergangenheit = Infinity;
+            let pastClosestId = spiele[0].id;
+
+            spiele.forEach(spiel => {
+                if (spiel.Startzeit && !spiel["Spiel_fertig?"]) {
+                    const spielMs = new Date(spiel.Startzeit).getTime();
+                    const diff = spielMs - jetztMs;
+
+                    if (diff >= 0) {
+
+                        if (diff < minDiffZukunft) {
+                            minDiffZukunft = diff;
+                            closestSpielId = spiel.id;
+                        }
+                    } else {
+
+                        if (Math.abs(diff) < minDiffVergangenheit) {
+                            minDiffVergangenheit = Math.abs(diff);
+                            pastClosestId = spiel.id;
+                        }
+                    }
+                }
+            });
+
+            if (minDiffZukunft !== Infinity) {
+                select.value = closestSpielId;
+            } else if (minDiffVergangenheit !== Infinity) {
+                select.value = pastClosestId;
+            } else if (spiele.length > 0) {
+                select.value = spiele[0].id;
+            }
+        }
+
+        await spielLaden();
+        starteBegruessungAnim();
+    }
+
+        async function speichern() {
+        //Alle Daten aus den Feldern sammeln
+        const name = document.getElementById("name").value;
+        const spielID = document.getElementById("spiel_select").value;
+        const teamA = document.getElementById("team_a").innerText;
+        const teamB = document.getElementById("team_b").innerText;
+        const toreA = Number(document.getElementById("tore_a").value);
+        const toreB = Number(document.getElementById("tore_b").value);
+
+        // Ist alles ausgefüllt?
+        if (!name || !spielID || teamA === "") {
+            alert("Bitte Namen eingeben und Spiel laden!");
+            return;
+        }
+
+
+        const { data: userDaten, error: userError } = await supabase
+            .from("users") 
+            .select("*")
+            .ilike("username", name)
+            .maybeSingle();
+
+        if (userError || !userDaten) {
+            alert("Fehler: Der Nutzername '" + name + "' existiert nicht in der Tabelle 'profile'!");
+            return;
+        }
+
+        const userUUID = userDaten.user_ID || userDaten.user_id;
+
+        if (!userUUID) {
+            alert("Fehler: Die ID des Nutzers konnte nicht ausgelesen werden. Bitte Spaltennamen prüfen.");
+            return;
+        }
+
+
+        const { error } = await supabase
+            .from("tipps") 
+            .upsert([{
+                tipper_ID: userUUID, 
+                spiel_ID: spielID,
+                tore_team_a: toreA,
+                tore_team_b: toreB
+            }],
+            { onConflict: 'tipper_ID,spiel_ID' });
+
+        if (error) {
+            alert("Fehler beim Speichern: " + error.message);
+        } else {
+            alert("Tipp für " + teamA + " vs. " + teamB + " wurde gespeichert!");
+
+            // Textfelder leeren und Werte in die grauen Platzhalter schieben
+            document.getElementById("tore_a").placeholder = toreA;
+            document.getElementById("tore_b").placeholder = toreB;
+            document.getElementById("tore_a").value = "";
+            document.getElementById("tore_b").value = "";
+
+            offeneTippsBerechnen();
+        }
+    }
+
+
+    async function offeneTippsBerechnen() {
+        const name = document.getElementById("name").value.trim();
+        const counterSpan = document.getElementById("offene_tipps_count");
+
+        if (!name) {
+            counterSpan.innerText = "--";
+            return;
+        }
+
+        const { data: userDaten, error: userError } = await supabase
+            .from("users") 
+            .select("*")
+            .ilike("username", name)
+            .maybeSingle();
+
+        if (userError || !userDaten) {
+            counterSpan.innerText = "--";
+            return;
+        }
+
+        const userUUID = userDaten.user_ID || userDaten.user_id;
+
+
+        const { data: spiele, error: spieleError } = await supabase
+            .from("spiele")
+            .select('id, Startzeit, "Spiel_fertig?"')
+            .eq("spiel_freigeschaltet", true);
+
+        if (spieleError || !spiele) return;
+
+        const { data: tipps, error: tippsError } = await supabase
+            .from("tipps")
+            .select("spiel_ID")
+            .eq("tipper_ID", userUUID);
+
+        if (tippsError || !tipps) return;
+
+        const getippteSpielIDs = new Set(tipps.map(t => String(t.spiel_ID)));
+
+        let offeneTipps = 0;
+        const jetztMs = new Date().getTime();
+
+        spiele.forEach(spiel => {
+
+            if (!getippteSpielIDs.has(String(spiel.id))) {
+
+                const istFertig = spiel["Spiel_fertig?"];
+                const startzeitMs = spiel.Startzeit ? new Date(spiel.Startzeit).getTime() : 0;
+                const läuftBereits = spiel.Startzeit && (startzeitMs <= jetztMs);
+
+
+                if (!istFertig && !läuftBereits) {
+                    offeneTipps++;
+                }
+            }
+        });
+
+        counterSpan.innerText = offeneTipps;
+    }
+
+    // Navigiert durch das Dropdown-Menü
+    function spielWechseln(richtung) {
+        const select = document.getElementById("spiel_select");
+        const currentIndex = select.selectedIndex;
+        const totalOptions = select.options.length;
+
+
+        if (totalOptions <= 1) return;
+
+        let newIndex = currentIndex + richtung;
+
+        // prüfen: Index 0 Spiele fangen bei 1 an
+        if (newIndex < 1) {
+            newIndex = totalOptions - 1; 
+        } else if (newIndex >= totalOptions) {
+            newIndex = 1; 
+        }
+
+
+        select.selectedIndex = newIndex;
+
+
+        spielLaden();
+      }
+      //InternerSpeicherTest
+      const gespeicherterName = localStorage.getItem("tippspiel_username");
+      if (gespeicherterName) {
+        document.getElementById("name").value = gespeicherterName;
+        setTimeout(offeneTippsBerechnen, 500);
+      }
+
+        const input = document.getElementById("name");
+        const meldung = document.getElementById("meldung");
+
+    spieleListeLaden();
+
+      window.addEventListener("click", () => {
+        const badge = document.getElementById("info_badge_tips");
+        const err = document.getElementById("limit-error");
+        if (badge) badge.classList.remove("active");
+        if (err) err.classList.remove("active");
+    });
+
+
+    async function checkAuthAndInit() {
+        const { data: { session }, error: authError } = await supabase.auth.getSession();
+
+        if (authError || !session) {
+            // Nicht eingeloggt -> Weiterleitung zur Loginseite
+            window.location.href = "login.html";
+            return;
+        }
+
+        const user = session.user;
+
+
+        const { data: userDaten, error: userError } = await supabase
+            .from("users")
+            .select("username")
+            .eq("user_ID", user.id)
+            .maybeSingle();
+
+        if (userError || !userDaten) {
+            alert("Fehler: Profil wurde nicht gefunden!");
+            window.location.href = "login.html";
+            return;
+        }
+
+
+        document.getElementById("username_display").innerText = userDaten.username;
+        document.getElementById("name").value = userDaten.username;
+    }
+
+
+
+let points_for_l1_prediction = 4;
+let points_for_l2_prediction = 3;
+let points_for_l3_prediction = 2;
+let points_for_draw_prediction = 2;
+let aktuellesSpiel = 0;
+let rangliste = [];
+let zeileT = [];
+
+const { data: spiele, error:  errorspiele} = await supabase.from("spiele").select("*").order("id", {ascending: true});
+    if(errorspiele)
+     {
+       document.getElementById("ausgabe").innerText=errorspiele.message;
+     }
+
+const { data: users, error: errorusers} = await supabase.from("users").select("*");
+    if(errorusers)
+    {
+        document.getElementById("ausgabe").innerText=errorusers.message;
+    }
+
+
+// Funktion zum sortieren und einfuegen in das Array
+
+async function ranglisteEintragen()
+{
+
+
+    for(let i = 0; i < users.length; i++)
+    {
+        let gesamtPunkte = await gesPunkteBerechnen(users[i].user_ID);
+        rangliste.push({
+            user_ID: users[i].user_ID,
+            punkte: gesamtPunkte
+        });
+
+    }
+    rangliste.sort((a, b) => b.punkte - a.punkte);
+
+
+}
+
+
+
+async function punkteBerechnen(spielID, tippA, tippB)
+{
+
+  let temp1 = spiele[spielID].tore_team_a - spiele[spielID].tore_team_b;
+  //arr_result_goals_A[i] - arr_result_goals_B[i];
+        let temp2 = tippA - tippB;
+        //matrix_predict_goals_A[j][i] - matrix_predict_goals_B[j][i];
+
+          if ( temp1 == temp2 && tippA == spiele[spielID].tore_team_a)
+          {
+            return points_for_l1_prediction;
+          }
+          else
+          {
+            if ( temp1 == temp2 && temp1 != 0)
+            {
+              return points_for_l2_prediction;
+            }
+            else
+            {
+                if ( temp1 == temp2 && temp1 == 0)
+                {
+                  return points_for_draw_prediction;
+                }
+              else
+              {
+                if ( Math.sign(temp1) == Math.sign(temp2) )
+                {
+                  return points_for_l3_prediction;
+                }
+                else
+                {
+                  return 0;
+                }
+              }
+            }
+
+          }
+
+}
+
+async function gesPunkteBerechnen(tipper_ID)
+{
+    const { data: tipps, error: errortipps } = await supabase.from("tipps").select("*").eq("tipper_ID", tipper_ID);
+    if(errortipps)
+    {
+        document.getElementById("ausgabe").innerText=errortipps.message;
+        return;
+    }
+    let answer = 0;
+    for(let i = 0; i < tipps.length; i++)
+    {
+        answer = answer + await punkteBerechnen(tipps[i].spiel_ID, tipps[i].tore_team_a, tipps[i].tore_team_b)
+    }
+    return answer;
+}
+
+async function nameUserIdGeben(userId)
+{
+    const { data: usersEq, error: errorusers} = await supabase.from("users").select("*").eq("user_ID", userId);
+    if(errorusers)
+    {
+        document.getElementById("ausgabe").innerText=errorusers.message;
+        return;
+    }
+    if(usersEq.length != 0)
+    {
+        return usersEq[0].username;
+    }
+    else
+    {
+        console.log("invalide User_ID");
+        return null;
+    }
+}
+
+// Funktion zum Laden von Platz, Benutzer und Punkte
+
+async function festeSpaltenLaden()
+{
+    let rang = 1;
+    const tabelle = document.getElementById("tabelle1");
+    let pktVorher = -1;
+    tabelle.innerHTML = "";
+    for(let i = 0; i < rangliste.length; i++)
+    {
+        let gesPunkte = rangliste[i].punkte;
+        if(gesPunkte < pktVorher)
+        {
+            rang++;
+        }
+         const row = tabelle.insertRow();
+
+        row.insertCell().innerText = rang;
+        row.insertCell().innerText = await nameUserIdGeben(rangliste[i].user_ID);
+        row.insertCell().innerText = gesPunkte;
+        row.insertCell().innerHTML = ""; // spätere Spalte
+
+        pktVorher = gesPunkte;
+        pktVorher = gesPunkte;
+    }
+    await variableSpalteLaden(aktuellesSpiel);
+}
+
+
+// Funktion zum Laden von der Spalte mit Tipps
+
+async function variableSpalteLaden(spielId)
+{
+    const { data: tipps, error: errortipps } = await supabase.from("tipps").select("*").eq("spiel_ID", spielId);
+    const { data: spiele, error: errorspiele} = await supabase.from("spiele").select("*").order("id", {ascending: true});
+    if(errortipps)
+    {
+        document.getElementById("ausgabe").innerText=errortipps.message;
+        return;
+    }
+    if(errorspiele)
+    {
+        document.getElementById("ausgabe").innerText=errorspiele.message;
+        return;
+    }
+    document.getElementById("spielT").innerText=spiele[spielId].team_a + " - " + spiele[spielId].team_b + "\n" + spiele[spielId].tore_team_a + " : " + spiele[spielId].tore_team_b;
+    const tabelle = document.getElementById("tabelle1");
+    let temp1 = false;
+    for(let i=0; i<rangliste.length;i++)
+    {
+        temp1 = false;
+        for(let j=0; j < tipps.length; j++)
+        {
+            if(rangliste[i].user_ID == tipps[j].tipper_ID && tipps[j].spiel_ID == spielId)
+            {
+                let punkte = await punkteBerechnen(aktuellesSpiel, tipps[j].tore_team_a, tipps[j].tore_team_b);
+                temp1 = true;     
+                tabelle.rows[i].cells[3].innerHTML =
+                    `${tipps[j].tore_team_a} : ${tipps[j].tore_team_b}<sup>${punkte}</sup>`;
+                break;
+            }
+        }
+
+        if (temp1 == false)
+        {
+           tabelle.rows[i].cells[3].innerHTML =
+            `- : -<sup>0</sup>`;
+        }
+
+    }
+}
+// Funktion fuer die Pfeile
+async function spielRechts(w)
+{
+    //const tabelle = document.getElementById("tabelle1");
+    //tabelle.innerHTML = "";
+    if(w && aktuellesSpiel != 15)
+    {
+        aktuellesSpiel += 1;
+    }
+    else if(!w && aktuellesSpiel != 0)
+    {
+        aktuellesSpiel -= 1;
+    }
+    else if(w && aktuellesSpiel == 15)
+    {
+        aktuellesSpiel = 0;
+    }
+    else
+    {
+        aktuellesSpiel = 15;
+    }
+    await variableSpalteLaden(aktuellesSpiel);
+}
+await ranglisteEintragen();
+await festeSpaltenLaden();
+//Suchfeld code
+function spielerSuchen() {
+    const suchtext = document.getElementById("suche").value.toLowerCase();
+    const zeilen = document.querySelectorAll("#tabelle1 tr");
+
+    zeilen.forEach(zeile => {
+        const username = zeile.cells[1].textContent.toLowerCase();
+
+        if (username.includes(suchtext)) {
+            zeile.style.display = "";
+        } else {
+            zeile.style.display = "none";
+        }
+    });
+}
+
+document.getElementById("suche").addEventListener("input", spielerSuchen);
+document.getElementById("weiter").addEventListener("click", function() {
+spielRechts(true);});
+document.getElementById("zurueck").addEventListener("click", function() {
+spielRechts(false);});
+
+        //test, weil ranglistentabelle nicht geladen wird, chat lösungsvorschlag, idk 
+        checkAuthAndInit();
+
+        spieleListeLaden();
+    // Funktionen global machen, damit die Buttons sie find en
+    document.getElementById("tippSpeichern").addEventListener("click", speichern);
+    document.getElementById("spiel_select").addEventListener("change", spielLaden);
+    document.getElementById("btn_prev").addEventListener("click", () => spielWechseln(-1));
+    document.getElementById("btn_next").addEventListener("click", () => spielWechseln(1));
+    //Veraltet: Wenn man den Namen tippt, sucht das System auch direkt nach alten Tipps
+    document.getElementById("name").addEventListener("input", spielLaden);
+    document.getElementById("logout_button").addEventListener("click", async () => {
+        await supabase.auth.signOut();
+        window.location.href = "login.html";
+    });
+    </script> 
+</body> 
+</html>

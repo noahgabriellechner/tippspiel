@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Input Page</title>
+</head>
+<body>
+  <h2>Text eingeben</h2>
+
+  <textarea id="content" placeholder="Dein Text"></textarea>
+  <br /><br />
+
+  <button id="Speichern">Speichern</button>
+  <button id="Logout">Logout</button>
+
+  <p id="status"></p>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabaseUrl = "https://kmhwwdsuzphkpfupkynf.supabase.co";
+    const supabaseKey = "sb_publishable_7ih4VSPUkXVfHkBa7lrDCA_mO_d0pW1";
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // check auth
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      window.location.href = "index.html"; // not logged in
+    }
+
+    const user = session.user;
+
+    async function saveText() {
+      const content = document.getElementById("content").value;
+
+      const { error } = await supabase
+        .from("texts")
+        .insert([
+          {
+            content: content,
+            user_id: user.id
+          }
+        ]);
+
+      document.getElementById("status").innerText =
+        error ? error.message : "Gespeichert!";
+    }
+
+    async function logout() {
+      await supabase.auth.signOut();
+      window.location.href = "login.html";
+    }
+
+    document.getElementById("Speichern").addEventListener("click", saveText);
+    document.getElementById("Logout").addEventListener("click", logout);
+  </script>
+</body>
+</html>
