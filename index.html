@@ -1,75 +1,13 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>Profilseite</title>
-
-   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-image: url("rasen.png");
-      background-size: cover;
-      background-position: center;
-      background-repeat: repeat;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 24px;
-      max-width: 250px;
-      margin: 12px auto;
-      background: white;
-      padding: 12px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    }
-
-    .profil {
-      max-width: 500px;
-      margin: 12px auto;
-      background: white;
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    }
-
-    .profil p {
-      padding: 12px 14px;
-      background: #f8fafc;
-      border-radius: 10px;
-      margin: 0 0 12px;
-    }
-
-    #ausgabe {
-      max-width: 500px;
-      margin: 16px auto 0;
-      color: #b91c1c;
-      font-weight: bold;
-    }
-  </style>
-
+<!DOCTYPE html> 
+<html lang="de"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <title>WM 2026 Tippspiel</title> 
 </head>
-<body>
+ <body>
+     <p> Bitte warten ... </p>
+<script type="module">
 
-    <h1>Mein Profil</h1>
-
-    <div class="profil">
-        <p><strong>Name:</strong> <span id="name"></span></p>
-        <p><strong>Benutzername:</strong> <span id="username"></span></p>
-        <p><strong>E-Mail:</strong> <span id="email"></span></p>
-    </div>
-
-    <div id="ausgabe"></div>
-
-   
-
-
-     
-    
- <!--Logik und DB-Verbindung mit JavaScript -->
-  <script type="module">
-
-    
      //---------------------------------------------------------------------
     //Supabase Verbindung (nicht ändern!!)
     //----------------------------------------------------------------------
@@ -79,38 +17,31 @@
     const supabaseKey = "sb_publishable_7ih4VSPUkXVfHkBa7lrDCA_mO_d0pW1";
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-
- //ende der Verbindung-------------------------------------------------------------
-
-   async function loadProfile(username) 
-   {
-
-    const { data: users,error:  errorusers} = await supabase.from("users").select("*");
-     if(errorusers)
-     {
-        document.getElementById("ausgabe").innerText=errorusers.message;
-        return;
-     }
-
-     let indexUser = -1; 
-
-     for(let i = 0; i < users.length; i++)
-     {
-        if(username == users[i].username)
-        {
-            indexUser = i;
-        }
-     }
-
-    document.getElementById("name").innerText=users[indexUser].Vorname + " " + users[indexUser].Name;
-    document.getElementById("username").innerText=users[indexUser].username;
-    //document.getElementById("email").innerText=users[indexUser].email;
+  
+    async function weiterleiten()
+    {
+        const { data: { session } } = await supabase.auth.getSession();
     }
 
-// WICHTIG: Funktion starten
-loadProfile("EmelieErdbeer");
-//ende der Funktion----------------------
+   if(!session)
+   {
+       window.location.href ="login.html";
+       return;
+   }
+    const user = session.user;
+    const { count, error } = await supabase.from("users").select("*", { count: "exact", head: true}).eq("user_ID", user.id);
 
-</script> 
-</body>
+    if(error || count <1)
+    {
+        window.location.href ="profil.html"
+        return;
+    }
+    window.location.href ="tippen.html";
+    
+
+    weiterleiten();
+            
+
+    </script> 
+</body> 
 </html>
